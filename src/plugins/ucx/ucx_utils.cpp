@@ -339,6 +339,11 @@ nixlUcxEp::estimateCost(size_t size,
                         std::chrono::microseconds &duration,
                         std::chrono::microseconds &err_margin,
                         nixl_cost_t &method) {
+    const nixl_status_t tx_status = checkTxState();
+    if (tx_status != NIXL_SUCCESS) {
+        return tx_status;
+    }
+
     ucp_ep_evaluate_perf_param_t params = {
         .field_mask = UCP_EP_PERF_PARAM_FIELD_MESSAGE_SIZE,
         .message_size = size,
@@ -364,6 +369,11 @@ nixlUcxEp::estimateCost(size_t size,
 
 nixl_status_t
 nixlUcxEp::flushEp(nixlUcxReq &req) {
+    const nixl_status_t status = checkTxState();
+    if (status != NIXL_SUCCESS) {
+        return status;
+    }
+
     ucp_request_param_t param;
     ucs_status_ptr_t request;
 
